@@ -42,9 +42,9 @@ export default {
 .logo-section {
   display: flex;
   justify-content: center;
-  align-self: center;
+  align-self:flex-start;
   flex-direction: column;
-  width: 20%;
+  width: 40%;
   padding: 0 2% 0 2%;
   max-width: 100px;
 }
@@ -52,15 +52,16 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: baseline;
 }
 .search-box {
-  width: 50%;
+  width: 80%;
   align-self: center;
   display: flex;
-  justify-content: center;
+  justify-content:flex-end;
   align-items: center;
+  padding:0 6% 0 0 ;
 }
 .search-box button {
   padding: 0px 5px 0px 5px;
@@ -87,23 +88,23 @@ export default {
   margin-right: 0px;
 }
 .login-signup {
-  /* width:25%; */
-  /* align-items: flex-end; */
-  /* display:flex; */
+  width:40%;
+  align-items: flex-end;
+  display:flex;
   align-self: center;
   justify-content: center;
   align-items: baseline;
-  margin: 0 2%;
+  margin: 0;
 }
 .login-signup div {
-  position: relative;
-  padding: 5px;
+  width:100%;
+  text-align: center;
   font-family: "Quicksand", sans-serif;
   font-size: 20px;
 }
 .login-signup button {
   padding: 0px 10px 0px 10px;
-  margin: 4%;
+  margin: 2%;
   background-color: #0a76cf;
   color: white;
   border-width: 2px;
