@@ -24,4 +24,10 @@ hr{
   background-color:rgb(102, 85, 85);
   border:none;
 }
+button:focus{
+  outline:none;
+}
+input:focus{
+  outline:none;
+}
 </style>

@@ -19,11 +19,13 @@
       <div class="login-signup">
         <div id="about-us">About us</div>
         <div id="help">Help</div>
-        <button id="login">LOGIN</button>
-        <button @click="signup = !signup" id="signup">SIGNUP</button>
+        <button @click="$router.replace('/login')">LOGIN</button>
+        <button @click="$router.replace('/signup')">SIGNUP</button>
       </div>
     </div>
-    <Signup v-bind:toggle="signup"/>
+    <router-view></router-view>
+    <!-- <router-view @login-change="login_cancel" :switch_login="login"></router-view> -->
+    <!-- <Signup @toggle-change="signup=!signup" v-bind:toggle="signup"/> -->
   </div>
 </template>
 
@@ -35,13 +37,15 @@ export default {
   name: "header",
   data:function() {
     return {
-      signup : true,
-      login : false
+      
     }
   },
   components:{
     Signup,
     Login
+  },
+  methods:{
+    
   }
 };
 </script>
