@@ -1,18 +1,18 @@
 <template>
   <div id="home">
-    <Header />
+    <MyHeader />
     <hr>
     <HumbergMenu />
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue'
+import MyHeader from './components/Header.vue'
 import HumbergMenu from './components/HumbergMenu.vue'
 export default {
   name: "home",
   components: {
-    Header,
+    MyHeader,
     HumbergMenu
   }
 };

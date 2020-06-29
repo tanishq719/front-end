@@ -4,10 +4,10 @@
       <div class="form inputs">
         <img @click="$router.replace('/')" src="../assets/clear.png" />
         <label >Username</label>
-        <input placeholder=Username>
+        <input v-model="username" placeholder=Username>
         <label>Password</label>
-        <input type=password placeholder=Password>
-        <input @click="loginUser($event,{'username':username,'password':password})" type=reset value=Login>
+        <input v-model="password" type=password placeholder=Password>
+        <input @click="login({'username':username,'password':password})" type=reset value=Login>
       </div>
     </div>
   </div>
@@ -24,8 +24,20 @@ export default {
       password:""
     }
   },
-  methods: mapActions(['loginUser'])
-    // loginUser: this.$store.dispatch('loginUser') 
+  methods:{
+    ...mapActions(['loginUser','callProfile','setInterceptors']),
+    login : function(cred){
+      this.loginUser(cred).then(()=> this.setInterceptors())
+      .then(()=>{
+        setTimeout(()=>{
+          this.callProfile()
+        },10000)
+        })
+      .catch(err=>console.log(err))
+      this.$router.replace('/')
+    }
+     // loginUser: this.$store.dispatch('loginUser') 
+  } 
 };
 </script>
 

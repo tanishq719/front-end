@@ -13,7 +13,7 @@ import { mapGetters } from 'vuex'
 
 export default {
     name:'alert',
-    computed: mapGetters(['getMessages'])
+    computed: mapGetters(['getMessages']) // computed keep track of changing values
 }
 </script>
 
@@ -27,6 +27,7 @@ export default {
   left:auto;
   width:100%;
   padding-top:2%;
+  z-index: 1;
 }
 ul{
   margin:auto;
@@ -45,11 +46,11 @@ ul{
   font-family: "Quicksand", sans-serif;
 }
 .error{
-  border:1px solid rgb(235, 11, 11);
+  border:3px solid rgb(235, 11, 11);
   color: rgb(185, 29, 29);
 }
 .success{
-  border:1px solid rgb(1, 158, 40);
+  border:3px solid rgb(1, 158, 40);
   color:rgb(7, 110, 33)
 }
 </style>

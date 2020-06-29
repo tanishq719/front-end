@@ -1,6 +1,9 @@
 <template>
   <div>
     <div class="header">
+      <transition name="fade">
+          <Alert v-if="getMessages.length > 0"/>
+      </transition>
       <div class="logo-section">
         <img id="logo" src="../assets/logo.png" />
         <img id="full-form" src="../assets/full-form.png" />
@@ -32,9 +35,11 @@
 <script>
 import Signup from './Signup'
 import Login from './Login'
+import Alert from './Alert'
+import { mapGetters } from 'vuex'
 
 export default {
-  name: "header",
+  name: "myheader",
   data:function() {
     return {
       
@@ -42,15 +47,23 @@ export default {
   },
   components:{
     Signup,
-    Login
+    Login,
+    Alert
   },
   methods:{
     
-  }
+  },
+  computed: mapGetters(['getMessages'])
 };
 </script>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 #logo {
   width: 100%;
   max-width: 100px;

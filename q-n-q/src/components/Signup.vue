@@ -1,9 +1,6 @@
 <template>
     <div >
         <div class="blur-back">
-            <transition name="fade">
-                <Alert v-if="getMessages.length > 0"/>
-            </transition>
             <div class="form">
                 <img @click="$router.replace('/')" src = "../assets/clear.png"/>
                 <div id="inputs">
@@ -62,8 +59,7 @@ export default {
           password2:"",
           description:"",
           imageData:"",
-          imageFile:"",
-          msg:[]
+          imageFile:""
       }
   },
   methods:{
@@ -117,7 +113,7 @@ export default {
                     this.insertMessages(msg)
                     setTimeout(()=>{
                         this.$router.replace('/login')
-                    },3000)
+                    },5000)
                 }
                 console.log(response)
             }).catch(error=>{
@@ -147,18 +143,12 @@ export default {
             // console.log(this.msg)
             // this.msg.push({'type':'success','note':'registerd'})
             // this.msg.push({'type':'error','note':'registerd'})
-    },
-    computed: mapGetters(['getMessages'])
+    }
+    // computed: mapGetters(['getMessages'])
 };
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
 .form > img{
     width:10%;
     max-width:40px;
