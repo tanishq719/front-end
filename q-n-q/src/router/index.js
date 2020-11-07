@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/Home'
-import Header from '@/components/Header'
 import Signup from '@/components/Signup'
-import HumbergMenu from '@/components/HumbergMenu'
 import Login from '@/components/Login'
+import Quest from '@/components/Quest'
+import MyFeed from '@/components/MyFeed'
 
 Vue.use(Router)
 
@@ -14,11 +13,14 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: {
-        default: Home,
-        Header,
-        HumbergMenu
+      components: {
+        mainView:MyFeed
       }
+      // children: [{
+      //   path:'/quest',
+      //   name: 'Quest',
+      //   component: Quest
+      // }]
     },
     {
       path:'/signup',
@@ -29,6 +31,12 @@ export default new Router({
       path:'/login',
       name:'Login',
       component:Login
+    },
+    {
+      path:'/quest',
+      name:'Quest',
+      components: {mainView:Quest},
+      
     }
   ]
 })

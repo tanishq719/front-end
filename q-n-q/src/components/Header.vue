@@ -4,9 +4,13 @@
       <transition name="fade">
           <Alert v-if="getMessages.length > 0"/>
       </transition>
-      <div class="logo-section">
+      <div @click="$router.replace('/')" class="logo-section">
         <img id="logo" src="../assets/logo.png" />
         <img id="full-form" src="../assets/full-form.png" />
+      </div>
+      <div class="about-us">
+        <div >About us</div>
+        <div >Help</div>
       </div>
       <div class="search-box">
         <input id="search" placeholder="Search" />
@@ -19,15 +23,21 @@
           </svg>
         </button>
       </div>
+      <div class="quest">
+        <button @click="$router.replace('/quest')" >ASK A QUESTION</button>
+      </div>
       <div class="login-signup">
-        <div id="about-us">About us</div>
-        <div id="help">Help</div>
-        <button @click="$router.replace('/login')">LOGIN</button>
-        <button @click="$router.replace('/signup')">SIGNUP</button>
+        <div class="auth" v-if="Object.keys(getUser()).length !== 0 && fetchUser()" id="user">
+          <img :src="image">
+          <p>{{username}}</p>
+        </div>
+        <div class="auth" v-else>
+          <button @click="$router.replace('/login')">LOGIN</button>
+          <button @click="$router.replace('/signup')">SIGNUP</button>
+        </div>
       </div>
     </div>
     <router-view></router-view>
-    <!-- <router-view @login-change="login_cancel" :switch_login="login"></router-view> -->
     <!-- <Signup @toggle-change="signup=!signup" v-bind:toggle="signup"/> -->
   </div>
 </template>
@@ -36,24 +46,41 @@
 import Signup from './Signup'
 import Login from './Login'
 import Alert from './Alert'
-import { mapGetters } from 'vuex'
+import { mapGetters} from 'vuex'
 
 export default {
   name: "myheader",
-  data:function() {
-    return {
-      
-    }
-  },
   components:{
     Signup,
     Login,
     Alert
   },
-  methods:{
-    
+  data : function()
+  {
+    return {
+      image:'',
+      username:''
+    }
   },
-  computed: mapGetters(['getMessages'])
+  methods:{
+    ...mapGetters(['getMessages','getUser']),
+    fetchUser: function(){
+      var i = this.getUser()["dp"];
+      this.image = "http://127.0.0.1:8000/media/"+i.substr(1,i.length-2)
+      this.username = this.getUser()["username"]
+      console.log(this.image)
+      return true
+    }
+  },
+  computed: {
+    ...mapGetters(['getMessages'])
+    // debug: function(){
+    //   console.log(this.getUser()["username"]);
+    //   console.log(Object.keys(this.getUser()).length)
+
+    // }
+  }
+  
 };
 </script>
 
@@ -77,24 +104,25 @@ export default {
   justify-content: center;
   align-self:flex-start;
   flex-direction: column;
-  width: 40%;
-  padding: 0 2% 0 2%;
+  padding: 2px 2%;
   max-width: 100px;
+  min-width: 100px;
 }
 .header {
   display: flex;
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
 }
 .search-box {
-  width: 80%;
+  width: 100%;
+  min-width: 200px;
   align-self: center;
   display: flex;
-  justify-content:flex-end;
+  justify-content:center;
   align-items: center;
-  padding:0 6% 0 0 ;
+  margin: 0px 100px;
 }
 .search-box button {
   padding: 0px 5px 0px 5px;
@@ -108,10 +136,11 @@ export default {
   border-style: solid;
   border-width: 2px;
   border-left: none;
+  height: 44px;
 }
 #search {
-  width: 50%;
-  padding: 6px 0px 6px 6px;
+  width: 100%;
+  padding: 0px 10px;
   border-width: 2px;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
@@ -119,14 +148,23 @@ export default {
   border-style: solid;
   border-right: none;
   margin-right: 0px;
+  height: 40px;
+  font-size: 16px;
+}
+.about-us{
+  display:flex;
+  padding: 0px 20px;
+}
+.about-us div{
+  width: max-content;
+  padding: 0px 10px;
 }
 .login-signup {
   width:40%;
-  align-items: flex-end;
   display:flex;
   align-self: center;
   justify-content: center;
-  align-items: baseline;
+  align-items: center;
   margin: 0;
 }
 .login-signup div {
@@ -135,7 +173,7 @@ export default {
   font-family: "Quicksand", sans-serif;
   font-size: 20px;
 }
-.login-signup button {
+.login-signup button,.quest button{
   padding: 0px 10px 0px 10px;
   margin: 2%;
   background-color: #0a76cf;
@@ -149,5 +187,33 @@ export default {
   text-align: center;
   font-family: "Quicksand", sans-serif;
   font-size: 20px;
+}
+.quest button{
+  background-image: radial-gradient(#a1a1a1 0%,#4e4e4e);
+  border-color:#7a7979;
+  color:white;
+  font-size: 16px;
+  border-width: 2px;
+}
+.quest{
+  padding-right: 20px;
+}
+.auth{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  padding:0px 10px;
+}
+
+.auth img{
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+
+.auth p{
+  padding:10px;
+  margin:0px;
 }
 </style>

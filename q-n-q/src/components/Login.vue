@@ -7,7 +7,7 @@
         <input v-model="username" placeholder=Username>
         <label>Password</label>
         <input v-model="password" type=password placeholder=Password>
-        <input @click="login({'username':username,'password':password})" type=reset value=Login>
+        <input @click="loginUser({'username':username,'password':password})" type=reset value=Login>
       </div>
     </div>
   </div>
@@ -26,17 +26,18 @@ export default {
   },
   methods:{
     ...mapActions(['loginUser','callProfile','setInterceptors']),
-    login : function(cred){
-      this.loginUser(cred).then(()=> this.setInterceptors())
-      .then(()=>{
-        setTimeout(()=>{
-          this.callProfile()
-        },10000)
-        })
-      .catch(err=>console.log(err))
-      this.$router.replace('/')
-    }
-     // loginUser: this.$store.dispatch('loginUser') 
+    // login : function(cred){
+    //   this.loginUser(cred).then(()=> this.setInterceptors())
+    //   // for trial purpose
+    //   // .then(()=>{
+    //   //   setTimeout(()=>{
+    //   //     this.callProfile()
+    //   //   },10000)
+    //   //   })
+    //   .catch(err=>console.log(err))
+    //   this.$router.replace('/')
+    // }
+    //  loginUser: this.$store.dispatch('loginUser') 
   } 
 };
 </script>

@@ -53,4 +53,8 @@ ul{
   border:3px solid rgb(1, 158, 40);
   color:rgb(7, 110, 33)
 }
+.warning{
+  border:3px solid rgb(214, 175, 0);
+  color:rgb(243, 187, 3)
+}
 </style>
