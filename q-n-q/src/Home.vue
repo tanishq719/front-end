@@ -31,10 +31,10 @@ export default {
   flex-direction:row;
 }
 hr{
-  height:2px;
+  height:1pt;
   background-color:rgb(102, 85, 85);
   border:none;
-  margin-top: 1%;
+  margin-top: -1px;
 }
 #home{
   content: fit-content(100%);

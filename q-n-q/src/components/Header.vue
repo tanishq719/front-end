@@ -63,7 +63,7 @@ export default {
     }
   },
   methods:{
-    ...mapGetters(['getMessages','getUser']),
+    ...mapGetters(['getUser']),
     fetchUser: function(){
       var i = this.getUser()["dp"];
       this.image = "http://127.0.0.1:8000/media/"+i.substr(1,i.length-2)
@@ -73,7 +73,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getMessages'])
+    ...mapGetters(['getMessages']),
+    getMessageS: {
+      //getter
+      get: function(){return getMessages();},
+      set: function(value){
+        console.log("inside setter")
+      }
+    }
     // debug: function(){
     //   console.log(this.getUser()["username"]);
     //   console.log(Object.keys(this.getUser()).length)
@@ -93,11 +100,11 @@ export default {
 }
 #logo {
   width: 100%;
-  max-width: 100px;
+  max-width: 90px;
 }
 #full-form {
   width: 100%;
-  max-width: 100px;
+  max-width: 90px;
 }
 .logo-section {
   display: flex;
@@ -114,6 +121,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-top:-7px;
 }
 .search-box {
   width: 100%;
@@ -136,7 +144,7 @@ export default {
   border-style: solid;
   border-width: 2px;
   border-left: none;
-  height: 44px;
+  height: 34px;
 }
 #search {
   width: 100%;
@@ -148,7 +156,7 @@ export default {
   border-style: solid;
   border-right: none;
   margin-right: 0px;
-  height: 40px;
+  height: 30px;
   font-size: 16px;
 }
 .about-us{
@@ -157,7 +165,7 @@ export default {
 }
 .about-us div{
   width: max-content;
-  padding: 0px 10px;
+  padding: 0px 20px;
 }
 .login-signup {
   width:40%;
@@ -192,8 +200,9 @@ export default {
   background-image: radial-gradient(#a1a1a1 0%,#4e4e4e);
   border-color:#7a7979;
   color:white;
-  font-size: 16px;
+  font-size: 12px;
   border-width: 2px;
+  height:35px;
 }
 .quest{
   padding-right: 20px;
@@ -206,8 +215,8 @@ export default {
 }
 
 .auth img{
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2px solid black;
 }
