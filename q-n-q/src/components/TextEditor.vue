@@ -1,10 +1,6 @@
 <template>
     <div class="body">
-        <div class="texteditor">
-            <p :style="{'margin':0}" contenteditable=true :html="body" placeholder="Explain">
-                <b>askjd</b>
-            </p>
-        </div>
+        <input :style="{}" contenteditable=true v-model="body" v-html="body" placeholder="Explain">
         <div style="display:flex; flex-direction:column-reverse;">
             <ul>
                 <li><img @click="styleLike($event)" name='bold' src="../assets/baseline_format_bold_black_18dp.png" width="25pt" height="25pt"></li>
@@ -25,17 +21,26 @@ export default {
     data : function(){
         return {
             content:"hello",
-            body:"<b>Hello</b>",
+            body:"Hello",
             bold: false,
             italic: false,
             list: false,
-            link: false
+            link: false,
+
         }
     },
     methods:{
         styleLike: function(e){
             if(e.target.name === 'bold'){
                 this.bold = !this.bold;
+                if(this.bold){
+                  this.body += '<b>';
+                  console.log(this.body);
+                }
+                else{
+                  this.body += '</b>';
+                  console.log(this.body);
+                }
             }
         }
     },
@@ -46,9 +51,12 @@ export default {
         bold:function(){
             if(this.bold)
             {
-                
+
             }
         },
+        body:function(){
+          console.log(this.body);
+        }
         // body:function(){
         //     if(this.bold){
         //         var appendStr = this.body[this.body.length-1].bold()
@@ -56,13 +64,13 @@ export default {
         //         this.body += appendStr;
         //         console.log(this.body);
         //     }
-                
+
         // }
     }
 }
 </script>
 
-<style>
+<style scoped>
 .body{
     display: flex;
     flex-direction: row;
@@ -77,7 +85,7 @@ ul{
 li{
     padding:0pt 3pt;
 }
-.texteditor{
+input{
     padding:5px;
     margin:5px 0;
     border-radius: 7px;
@@ -87,5 +95,7 @@ li{
     resize:none;
     width:100%;
     height: 300pt;
+    font-family:Lucida, sans-serif;
+    font-size:'10pt';
 }
 </style>

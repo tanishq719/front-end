@@ -1,2 +1,5 @@
 ports:
   - port: 80
+vscode:
+  extensions:
+    - octref.vetur@0.30.0:H8aqTikA9GiRqj3r+E9ryA==
