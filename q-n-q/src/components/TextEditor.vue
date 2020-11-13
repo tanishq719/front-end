@@ -1,8 +1,10 @@
 <template>
     <div class="body">
-        <textarea v-bind:"content" rows=20 cols=80 placeholder="Explain">
-    {{ body }}
-        </textarea>
+        <div class="texteditor">
+            <p :style="{'margin':0}" contenteditable=true :html="body" placeholder="Explain">
+                <b>askjd</b>
+            </p>
+        </div>
         <div style="display:flex; flex-direction:column-reverse;">
             <ul>
                 <li><img @click="styleLike($event)" name='bold' src="../assets/baseline_format_bold_black_18dp.png" width="25pt" height="25pt"></li>
@@ -22,8 +24,8 @@ export default {
     name: "TextEditor",
     data : function(){
         return {
-            body:"Hello",
-            content:"",
+            content:"hello",
+            body:"<b>Hello</b>",
             bold: false,
             italic: false,
             list: false,
@@ -65,6 +67,7 @@ export default {
     display: flex;
     flex-direction: row;
     position: relative;
+    margin:0%;
 }
 ul{
     list-style:none;
@@ -74,7 +77,7 @@ ul{
 li{
     padding:0pt 3pt;
 }
-textarea{
+.texteditor{
     padding:5px;
     margin:5px 0;
     border-radius: 7px;
@@ -83,5 +86,6 @@ textarea{
     border-width: 2pt;
     resize:none;
     width:100%;
+    height: 300pt;
 }
 </style>

@@ -50,8 +50,8 @@ export default {
 
 <style scoped>
 .quest{
-    width:max-content;
-    margin: auto;
+    width:100%;
+    margin: 15% 0%;
     margin-top: 2%;
     display:flex;
     flex-direction: row;
