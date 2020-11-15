@@ -77,6 +77,7 @@ export default {
     getMessageS: {
       //getter
       get: function(){return getMessages();},
+      //setter
       set: function(value){
         console.log("inside setter")
       }

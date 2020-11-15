@@ -87,13 +87,13 @@ const userActions = {
         commit('saveUser',res.data)
       })
       .catch(error=>{
-        var msg = []
-        var m = ""
+        var msg = [];
+        var m = "";
         for(var field in error.response.data){
             m = field+":"+error.response.data[field]
             msg.push({'type':'error','note': m})
         }
-        dispatch('insertMessages',msg)
+        dispatch('insertMessages',msg);
       })
       .catch(err=>{
         var msg = [{'type':'error','note': 'You are offline !!'}]
