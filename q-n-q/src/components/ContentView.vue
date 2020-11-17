@@ -1,6 +1,5 @@
 <template>
   <div class="content" >
-      <!-- a quick brown fox jumps over the lazy dog a quick brown fox jumps over the lazy dog a quick brown fox jumps over the lazy dog a quick brown fox jumps over the lazy dog -->
       <p v-html="body"></p>
   </div>
 </template>
@@ -11,8 +10,8 @@ export default {
     name:"ContentView",
     data:function(){
         return {
-            body: this.getBody(),
-            imageDatas: this.getImageDatas()
+            body: '',
+            imageDatas: ''
         }
     },
     methods:{
@@ -20,7 +19,19 @@ export default {
     },
     computed:{
         ...mapGetters(['getBody','getImageDatas']),
-
+        refreshBody(){
+            this.body = getBody();
+            var reg = /\$\$\d+\$\$/;
+            var i=0;
+            while(content.search(reg) != -1)
+            {
+                var replaceAble = '<img :src="imageDatas['+i+']">';
+                this.body.replace(reg,replaceAble);
+                i++;
+            }
+            // this.body = content;
+            this.imageDatas = getImagesDatas();
+        }
     }
 }
 </script>

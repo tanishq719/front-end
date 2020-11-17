@@ -159,11 +159,11 @@ export default {
         getSource: function(e){
             console.log("getSourde get called");
             const input = e.target;
-            this.imageFiles.append(input.files[this.imageFiles.length - 1]);
+            this.imageFiles.push(input.files[this.imageFiles.length - 1]);
             if (input.files && input.files[this.imageFiles.length - 1]){
                 var reader = new FileReader();
                 reader.onload = (e) => {
-                    this.imageData.append(e.target.result);
+                    this.imageDatas.push(e.target.result);
                 }
                 reader.readAsDataURL(input.files[this.imageFiles.length - 1]);
             }
