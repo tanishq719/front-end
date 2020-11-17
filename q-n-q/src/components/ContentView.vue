@@ -1,6 +1,7 @@
 <template>
-  <div class="content">
-      <p v-html="getBody"></p>
+  <div class="content" >
+      <!-- a quick brown fox jumps over the lazy dog a quick brown fox jumps over the lazy dog a quick brown fox jumps over the lazy dog a quick brown fox jumps over the lazy dog -->
+      <p v-html="body"></p>
   </div>
 </template>
 
@@ -10,14 +11,15 @@ export default {
     name:"ContentView",
     data:function(){
         return {
-            content:""
+            body: this.getBody(),
+            imageDatas: this.getImageDatas()
         }
     },
     methods:{
         
     },
     computed:{
-        ...mapGetters(['getBody']),
+        ...mapGetters(['getBody','getImageDatas']),
 
     }
 }
@@ -39,9 +41,9 @@ export default {
     word-wrap: break-word;
 }
 p{
-    white-space: pre;
-    
-    
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-all;
     margin: 0;
 }
 </style>

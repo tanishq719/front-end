@@ -1,6 +1,6 @@
 <template>
   <div class="quest">
-    <div class="part1" :style="{ 'flex-grow': 3 }">
+    <div class="part1" :style="{ 'width': '60%' }">
       <div>
         <label>Title</label>
         <input
@@ -13,7 +13,7 @@
       <TextEditor />
       <button :style="{'margin': 'auto','margin-top':'5pt'}" @click="postQuestion">Post</button>
     </div>
-    <div class="part1" :style="{ 'flex-grow': 1 }">
+    <div class="part1" :style="{ 'width': '40%' }">
       <div class="select">
         <div :style="{ padding: '0% 7%' }">
           <label>Choose group</label>

@@ -4,12 +4,13 @@
         </textarea>
         <div style="display:flex; flex-direction:column-reverse;">
             <ul>
-                <li><img @click="styleLike($event)" :style="[bold?{'background-color':'#f0af2e','border-radius':'50%','padding':'2pt'}:{}]" name='bold' src="../assets/baseline_format_bold_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><img @click="styleLike($event)" :style="[italic?{'background-color':'#f0af2e','border-radius':'50%','padding':'2pt'}:{}]" name='italic' src="../assets/baseline_format_italic_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><img @click="styleLike($event)" :style="[list?{'background-color':'#f0af2e','border-radius':'50%','padding':'2pt'}:{}]" name='list' src="../assets/baseline_format_list_bulleted_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><img @click="styleLike($event)" :style="[image?{'background-color':'#f0af2e','border-radius':'50%','padding':'2pt'}:{}]" name='image' src="../assets/baseline_image_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><img @click="styleLike($event)" :style="[link?{'background-color':'#f0af2e','border-radius':'50%','padding':'2pt'}:{}]" name='link' src="../assets/baseline_link_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><img @click="styleLike($event)" :style="[math?{'background-color':'#f0af2e','border-radius':'50%','padding':'2pt'}:{}]" name='math' src="../assets/baseline_functions_black_18dp.png" width="25pt" height="25pt"></li>
+                <li><img @click="styleLike($event)" :style="[bold?style:{}]" name='bold' src="../assets/baseline_format_bold_black_18dp.png" width="25pt" height="25pt"></li>
+                <li><img @click="styleLike($event)" :style="[italic?style:{}]" name='italic' src="../assets/baseline_format_italic_black_18dp.png" width="25pt" height="25pt"></li>
+                <li><img @click="styleLike($event)" :style="[list?style:{}]" name='list' src="../assets/baseline_format_list_bulleted_black_18dp.png" width="25pt" height="25pt"></li>
+                <li><label for="file-input"><img @click="styleLike($event)" :style="[image?style:{}]" name='image' src="../assets/baseline_image_black_18dp.png" width="25pt" height="25pt"></label></li>
+                <li><img @click="styleLike($event)" :style="[link?style:{}]" name='link' src="../assets/baseline_link_black_18dp.png" width="25pt" height="25pt"></li>
+                <li><img @click="styleLike($event)" :style="[math?style:{}]" name='math' src="../assets/baseline_functions_black_18dp.png" width="25pt" height="25pt"></li>
+                <input id="file-input" @change="getSource" type="file"/>
             </ul>
         </div>
     </div>
@@ -28,11 +29,18 @@ export default {
             list: false,
             image: false,
             link: false,
-            math: false
+            math: false,
+            imageFiles:[],
+            imageDatas:[],
+            style:{
+                'background-color':'#f0af2e',
+                'border-radius':'50%',
+                'padding':'2pt'
+            }
         }
     },
     methods:{
-        ...mapMutations(['saveBody']),
+        ...mapMutations(['saveBody','saveImageFiles','saveImageDatas']),
 
         styleLike: function(e){
             var editor = this.$refs['textarea'];
@@ -120,6 +128,24 @@ export default {
                     editor.focus();
                 }
             }
+
+            else if(e.target.name === 'image')
+            {
+                this.image = !this.image;
+                if(this.image)
+                {
+                    var p = new Promise((resolve,reject)=>{
+                        this.body = this.body.substr(0,pos) + '\n$$'+this.imageFiles.length+'$$\n' + this.body.substr(pos, this.body.length-1); 
+                        console.log(this.body);
+                        resolve();
+                    });
+
+                    p.then(()=>{
+                        editor.selectionEnd = editor.selectionStart = pos + 8 + this.imageFiles.length.toString().length;
+                        editor.focus();
+                    })
+                }
+            }
         },
 
         listNewline: function(e){
@@ -128,6 +154,20 @@ export default {
                 e.preventDefault();
                 this.body += '\n  &bull;\t';
             }
+        },
+
+        getSource: function(e){
+            console.log("getSourde get called");
+            const input = e.target;
+            this.imageFiles.append(input.files[this.imageFiles.length - 1]);
+            if (input.files && input.files[this.imageFiles.length - 1]){
+                var reader = new FileReader();
+                reader.onload = (e) => {
+                    this.imageData.append(e.target.result);
+                }
+                reader.readAsDataURL(input.files[this.imageFiles.length - 1]);
+            }
+            this.image = !this.image;
         }
     },
     created(){
@@ -135,7 +175,16 @@ export default {
     },
     watch:{
         body:function(){
-            this.saveBody(this.body)
+            this.saveBody(this.body);
+        },
+        title:function(){
+
+        },
+        imageFiles: function(){
+            this.saveImageFiles(this.imageFiles);
+        },
+        imageDatas: function(){
+            this.saveImageDatas(this.imageDatas);
         }
     }
 }
@@ -168,5 +217,8 @@ textarea{
     width:100%;
     font-family:'Inria Serif', serif;
     font-size:10pt;
+}
+#file-input{
+   display: none;
 }
 </style>
