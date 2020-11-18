@@ -1,7 +1,9 @@
 <template>
   <div class="content" >
   {{refreshBody}}
-      <p v-html="body"></p>
+      <p v-html="body">
+          <!-- <img v-if="imageDatas" :src="> -->
+      </p>
   </div>
 </template>
 
@@ -11,8 +13,7 @@ export default {
     name:"ContentView",
     data:function(){
         return {
-            body: '',
-            imageDatas: ''
+            body: ''
         }
     },
     methods:{
@@ -24,15 +25,18 @@ export default {
           console.log('from computed of contentView');
             this.body = this.getBody;
             var reg = /\$\$\d+\$\$/;
-            var i=0;
-            while(this.body.search(reg) != -1)
+            var i = this.body.search(reg);
+            while( i != -1)
             {
-                var replaceAble = '<img :src="imageDatas['+i+']">';
-                this.body.replace(reg,replaceAble);
-                i++;
+                console.log(i);
+                console.log(this.body[i+2])
+                var replaceAble = '<img src="'+this.getImageDatas[Number(this.body[i+2])]+'" class="contentImg" >';
+                console.log(replaceAble);
+                this.body = this.body.replace(reg,replaceAble);
+                console.log(this.body);
+                i = this.body.search(reg);
+                console.log(i);
             }
-            // this.body = content;
-            this.imageDatas = this.getImagesDatas;
         }
     }
 }
@@ -52,11 +56,21 @@ export default {
     height: 65%;
     margin-left: 20pt;
     word-wrap: break-word;
+    overflow-y: auto;
 }
 p{
     white-space: pre-wrap;
     overflow-wrap: break-word;
     word-break: break-all;
     margin: 0;
+}
+</style>
+<style>
+.contentImg{
+    width:60%;
+    height:20%;
+    max-height: 400px;
+    display: grid;
+    margin: auto;
 }
 </style>

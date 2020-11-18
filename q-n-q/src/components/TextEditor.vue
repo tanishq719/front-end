@@ -136,7 +136,7 @@ export default {
                 if(this.image)
                 {
                     var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substr(0,pos) + '\n$$'+this.imageFiles.length+'$$\n' + this.body.substr(pos, this.body.length-1);
+                        this.body = this.body.substr(0,pos) + '\n$$'+(this.imageFiles.length-1)+'$$\n' + this.body.substr(pos, this.body.length-1);
                         console.log(this.body);
                         resolve();
                     });
@@ -161,15 +161,18 @@ export default {
             console.log("getSourde get called");
             console.log(e);
             const input = e.target;
-            this.imageFiles.push(input.files[this.imageFiles.length - 1]);
-            if (input.files && input.files[this.imageFiles.length - 1]){
+            if (input.files && input.files[0]){
                 console.log('input file is being read');
                 var reader = new FileReader();
                 reader.onload = (e) => {
                     this.imageDatas.push(e.target.result);
+                };
+                for(var j=0; j<input.files.length; j++)
+                {
+                    this.imageFiles.push(input.files[j]);
+                    reader.readAsDataURL(input.files[j]);
                 }
-                reader.readAsDataURL(input.files[this.imageFiles.length - 1]);
-            this.styleLike(e);
+                this.styleLike(e);
             }
             this.image = !this.image;
         }
