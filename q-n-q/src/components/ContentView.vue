@@ -1,5 +1,6 @@
 <template>
   <div class="content" >
+  {{refreshBody}}
       <p v-html="body"></p>
   </div>
 </template>
@@ -15,22 +16,23 @@ export default {
         }
     },
     methods:{
-        
+
     },
     computed:{
         ...mapGetters(['getBody','getImageDatas']),
-        refreshBody(){
-            this.body = getBody();
+        refreshBody: function(){
+          console.log('from computed of contentView');
+            this.body = this.getBody;
             var reg = /\$\$\d+\$\$/;
             var i=0;
-            while(content.search(reg) != -1)
+            while(this.body.search(reg) != -1)
             {
                 var replaceAble = '<img :src="imageDatas['+i+']">';
                 this.body.replace(reg,replaceAble);
                 i++;
             }
             // this.body = content;
-            this.imageDatas = getImagesDatas();
+            this.imageDatas = this.getImagesDatas;
         }
     }
 }

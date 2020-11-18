@@ -7,10 +7,10 @@
                 <li><img @click="styleLike($event)" :style="[bold?style:{}]" name='bold' src="../assets/baseline_format_bold_black_18dp.png" width="25pt" height="25pt"></li>
                 <li><img @click="styleLike($event)" :style="[italic?style:{}]" name='italic' src="../assets/baseline_format_italic_black_18dp.png" width="25pt" height="25pt"></li>
                 <li><img @click="styleLike($event)" :style="[list?style:{}]" name='list' src="../assets/baseline_format_list_bulleted_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><label for="file-input"><img @click="styleLike($event)" :style="[image?style:{}]" name='image' src="../assets/baseline_image_black_18dp.png" width="25pt" height="25pt"></label></li>
+                <li><label for="file-input"><img @click="image=!image" :style="[image?style:{}]" src="../assets/baseline_image_black_18dp.png" width="25pt" height="25pt"></label></li>
                 <li><img @click="styleLike($event)" :style="[link?style:{}]" name='link' src="../assets/baseline_link_black_18dp.png" width="25pt" height="25pt"></li>
                 <li><img @click="styleLike($event)" :style="[math?style:{}]" name='math' src="../assets/baseline_functions_black_18dp.png" width="25pt" height="25pt"></li>
-                <input id="file-input" @change="getSource" type="file"/>
+                <input id="file-input" @change="getSource" name='image' type="file"/>
             </ul>
         </div>
     </div>
@@ -45,12 +45,14 @@ export default {
         styleLike: function(e){
             var editor = this.$refs['textarea'];
             var pos = editor.selectionStart;
+            console.log('from styleLike image outside');
+            console.log(e);
             if(e.target.name === 'bold'){
                 this.bold = !this.bold;
 
                 if(this.bold){
                     var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substr(0,pos) + '<b></b>' + this.body.substr(pos, this.body.length-1); 
+                        this.body = this.body.substr(0,pos) + '<b></b>' + this.body.substr(pos, this.body.length-1);
                         console.log(this.body);
                         resolve();
                     });
@@ -58,7 +60,7 @@ export default {
                     p.then(()=>{
                         editor.selectionEnd = editor.selectionStart = pos + 3;
                         editor.focus();
-                    }) 
+                    })
                 }
 
                 else{
@@ -86,7 +88,7 @@ export default {
 
                 if(this.italic){
                     var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substr(0,pos) + '<i></i>' + this.body.substr(pos, this.body.length-1); 
+                        this.body = this.body.substr(0,pos) + '<i></i>' + this.body.substr(pos, this.body.length-1);
                         console.log(this.body);
                         resolve();
                     });
@@ -128,14 +130,13 @@ export default {
                     editor.focus();
                 }
             }
-
             else if(e.target.name === 'image')
             {
-                this.image = !this.image;
+                console.log('from styleLike image inside');
                 if(this.image)
                 {
                     var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substr(0,pos) + '\n$$'+this.imageFiles.length+'$$\n' + this.body.substr(pos, this.body.length-1); 
+                        this.body = this.body.substr(0,pos) + '\n$$'+this.imageFiles.length+'$$\n' + this.body.substr(pos, this.body.length-1);
                         console.log(this.body);
                         resolve();
                     });
@@ -158,14 +159,17 @@ export default {
 
         getSource: function(e){
             console.log("getSourde get called");
+            console.log(e);
             const input = e.target;
             this.imageFiles.push(input.files[this.imageFiles.length - 1]);
             if (input.files && input.files[this.imageFiles.length - 1]){
+                console.log('input file is being read');
                 var reader = new FileReader();
                 reader.onload = (e) => {
                     this.imageDatas.push(e.target.result);
                 }
                 reader.readAsDataURL(input.files[this.imageFiles.length - 1]);
+            this.styleLike(e);
             }
             this.image = !this.image;
         }
