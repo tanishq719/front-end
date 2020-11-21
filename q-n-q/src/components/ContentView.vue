@@ -53,7 +53,7 @@ export default {
     border-width: 2pt;
     font-family:'Montserrat', sans-serif;
     font-size:14pt;
-    height: 65%;
+    height: 335px;
     margin-left: 20pt;
     word-wrap: break-word;
     overflow-y: auto;
