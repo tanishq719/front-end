@@ -8,11 +8,13 @@
         </div>
         {{refershBody}}
         <textarea v-model="body" 
+        @keydown.exact="gate($event)"
         @keydown.ctrl.66.exact.prevent="makeBold(true)" 
         @keydown.ctrl.73.exact.prevent="makeItalic(true)"
         @keydown.ctrl.76.exact.prevent="styleLike({'target':{'name':'list'}})" 
-        @keydown.enter="listNewline($event)" ref="textarea" rows=20 cols=40 placeholder="Explain">
+        @keydown.enter.exact="listNewline($event)" ref="textarea" rows=20 cols=40 placeholder="Explain">
         </textarea>
+        <div id="pallet">{{letters}}/750</div>
         <div style="display:flex; flex-direction:column-reverse;">
             <ul>
                 <li><img @click="styleLike($event)" :style="[bold?style:{}]" name='bold' src="../assets/baseline_format_bold_black_18dp.png" width="25pt" height="25pt"></li>
@@ -58,8 +60,7 @@
 
 <script>
 import { bus } from '../main';
-import {mapMutations} from 'vuex';
-import { mapGetters } from 'vuex';
+import { mapMutations, mapGetters, mapActions} from 'vuex';
 export default {
     name: "TextEditor",
     data : function(){
@@ -81,11 +82,21 @@ export default {
             editor:"",
             elapse:false,
             extLink:"",
-            linkName:""
+            linkName:"",
+            letters:0
         }
     },
     methods:{
         ...mapMutations(['saveBody','saveImageFiles','saveImageDatas']),
+        ...mapActions(['insertMessages']),
+        gate:function(e){
+            console.log(e);
+            if(e.key !== "Backspace" && this.body.length >= 750)
+            {
+                e.preventDefault();
+                this.insertMessages([{'type':'warning','note':'word limit exceeded !!!'}]);
+            }
+        },
         insertSym: function(e){
             var pos = this.editor.selectionStart;
             this.body = this.body.substring(0,pos) + e.target.innerHTML + this.body.substring(pos, this.body.length);
@@ -369,6 +380,12 @@ export default {
     },
     watch:{
         body:function(){
+            this.letters = this.body.length;
+            if(this.body.length > 750)
+            {
+                this.body = this.body.substring(0,750);
+                this.insertMessages([{'type':'warning','note':'word limit exceeded !!!'}]);
+            }
             this.saveBody(this.body);
         },
         imageFiles: function(){
@@ -459,8 +476,8 @@ textarea{
   margin: 5pt auto;
 }
 #symbols{
-    width:150pt;
-    height:125pt;
+    width:170pt;
+    height:135pt;
     position:absolute;
     top:40%;
     left:100%;
@@ -472,7 +489,7 @@ textarea{
     transition: 1s;
 }
 #symbols ul li{
-    float:left;
+    display:inline-block;
     padding:5px;
     border-bottom-style:solid;
     border-color:#bdc0c4;
@@ -482,5 +499,14 @@ textarea{
 }
 li:hover{
     color: #fde400;
+}
+#pallet{
+    position: absolute;
+    top: 100%;
+    left: 83%;
+    border-style: solid;
+    border-width: 2pt;
+    border-radius: 10pt;
+    color:#ff8800;
 }
 </style>

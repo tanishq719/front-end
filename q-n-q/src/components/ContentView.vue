@@ -1,8 +1,8 @@
 <template>
   <div class="content" >
   {{refreshBody}}
-  <h2 v-text="title" :style="{'margin':'3pt'}"></h2>
-  <hr>
+  <h2  v-text="title" :style="{'margin':'3pt'}"></h2>
+  <hr v-if="title.length !== 0">
       <p v-html="body">
           <!-- <img v-if="imageDatas" :src="> -->
       </p>

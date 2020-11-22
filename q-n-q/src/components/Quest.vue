@@ -21,7 +21,7 @@
           <input placeholder="give Tags for better visibility" />
         </div>
         <div :style="{ padding: '0% 7%' }">
-          <label :style="{ padding: '5%' }">Choose group</label>
+          <label>Choose group</label>
           <input placeholder="choose one group" />
         </div>
       </div>
