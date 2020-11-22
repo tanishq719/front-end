@@ -18,7 +18,8 @@
       <div class="select">
         <div :style="{ padding: '0% 7%' }">
           <label>Choose Tags</label>
-          <input placeholder="give Tags for better visibility" />
+          <input placeholder="for better visibility" />
+          <div v-if="fetchedTags.length!=0" class="choose-tag"></div>
         </div>
         <div :style="{ padding: '0% 7%' }">
           <label>Choose group</label>
@@ -49,6 +50,7 @@ export default {
       title: "",
       group: "",
       tag: [],
+      fetchedTags:[]
     };
   },
   methods: {
