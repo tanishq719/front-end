@@ -6,7 +6,12 @@
                 <input v-model="linkName" placeholder="name to show"/>
                 <button @click="makeLink()">OK</button>
         </div>
-        <textarea v-model="body" @keydown.enter="listNewline($event)" ref="textarea" rows=20 cols=40 placeholder="Explain" @load="initialize()">
+        {{refershBody}}
+        <textarea v-model="body" 
+        @keydown.ctrl.66.exact.prevent="makeBold(true)" 
+        @keydown.ctrl.73.exact.prevent="makeItalic(true)"
+        @keydown.ctrl.76.exact.prevent="styleLike({'target':{'name':'list'}})" 
+        @keydown.enter="listNewline($event)" ref="textarea" rows=20 cols=40 placeholder="Explain">
         </textarea>
         <div style="display:flex; flex-direction:column-reverse;">
             <ul>
@@ -15,7 +20,36 @@
                 <li><img @click="styleLike($event)" :style="[list?style:{}]" name='list' src="../assets/baseline_format_list_bulleted_black_18dp.png" width="25pt" height="25pt"></li>
                 <li><label for="file-input"><img @click="image=!image" :style="[image?style:{}]" src="../assets/baseline_image_black_18dp.png" width="25pt" height="25pt"></label></li>
                 <li><img @click="link=!link" :style="[link?style:{}]" name='link' src="../assets/baseline_link_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><img @click="styleLike($event)" :style="[math?style:{}]" name='math' src="../assets/baseline_functions_black_18dp.png" width="25pt" height="25pt"></li>
+                <li><img @mouseover="math=!math" :style="[math?style:{}]" name='math' src="../assets/baseline_functions_black_18dp.png" width="25pt" height="25pt"></li>
+                <div @mouseover="math=true" @mouseleave="math=false" v-if="math === true" id="symbols">
+                    <ul>
+                        <li @click="insertSym($event)">&forall;</li>
+                        <li @click="insertSym($event)">&part;</li>
+                        <li @click="insertSym($event)">&exist;</li>
+                        <li @click="insertSym($event)">&sum;</li>
+                        <li @click="insertSym($event)">&prod;</li>
+                        <li @click="insertSym($event)">&minus;</li>
+                        <li @click="insertSym($event)">&#x2213;</li>
+                        <li @click="insertSym($event)">&#x2215;</li>
+                        <li @click="insertSym($event)">&lowast;</li>
+                        <li @click="insertSym($event)">&#x2219;</li>
+                        <li @click="insertSym($event)">&radic;</li>
+                        <li @click="insertSym($event)">&#x221B;</li>
+                        <li @click="insertSym($event)">&#x221C;</li>
+                        <li @click="insertSym($event)">&prop;</li>
+                        <li @click="insertSym($event)">&infin;</li>
+                        <li @click="insertSym($event)">&ang;</li>
+                        <li @click="insertSym($event)">&and;</li>
+                        <li @click="insertSym($event)">&or;</li>
+                        <li @click="insertSym($event)">&cap;</li>
+                        <li @click="insertSym($event)">&cup;</li>
+                        <li @click="insertSym($event)">&int;</li>
+                        <li @click="insertSym($event)">&le;</li>
+                        <li @click="insertSym($event)">&ge;</li>
+                        <li @click="insertSym($event)">&sube;</li>
+                        <li @click="insertSym($event)">&supe;</li>
+                    </ul>
+                </div>
                 <input id="file-input" @change="getSource" name='image' type="file"/>
             </ul>
         </div>
@@ -25,16 +59,17 @@
 <script>
 import { bus } from '../main';
 import {mapMutations} from 'vuex';
+import { mapGetters } from 'vuex';
 export default {
     name: "TextEditor",
     data : function(){
         return {
-            body:"Hello",
+            body:'',
             bold: false,
             italic: false,
             list: false,
             image: false,
-            link: true,
+            link: false,
             math: false,
             imageFiles:[],
             imageDatas:[],
@@ -51,31 +86,75 @@ export default {
     },
     methods:{
         ...mapMutations(['saveBody','saveImageFiles','saveImageDatas']),
-        makeBold: function(){
+        insertSym: function(e){
             var pos = this.editor.selectionStart;
-            var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substr(0,pos) + '<b></b>' + this.body.substr(pos, this.body.length-1);
-                        console.log(this.body);
-                        resolve();
-                    });
-
-            p.then(()=>{
-                        this.editor.selectionEnd = this.editor.selectionStart = pos + 3;
-                        this.editor.focus();
-            });
+            this.body = this.body.substring(0,pos) + e.target.innerHTML + this.body.substring(pos, this.body.length);
+            this.editor.selectionEnd = this.editor.selectionStart = pos + 1;
         },
-        makeItalic:function(){
-            var pos = this.editor.selectionStart;
-            var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substr(0,pos) + '<i></i>' + this.body.substr(pos, this.body.length-1);
-                        console.log(this.body);
+        makeBold: function(flag){
+            if(flag){
+                var start = this.editor.selectionStart;
+                var end = this.editor.selectionEnd;
+                if(start > end)
+                {
+                    var temp = start;
+                    start = end;
+                    end = start;
+                }
+                var p = new Promise((resolve,reject)=>{
+                    this.body = this.body.substring(0,start) + '<b>' + this.body.substring(start,end) + '</b>' + this.body.substring(end,this.body.length);
+                    resolve();
+                });
+                p.then(()=>{
+                    this.editor.selectionEnd = this.editor.selectionStart = end + 7;
+                    this.editor.focus();
+                });     
+            }
+            else{
+                var pos = this.editor.selectionStart;
+                var p = new Promise((resolve,reject)=>{
+                        this.body = this.body.substring(0,pos) + '<b></b>' + this.body.substring(pos, this.body.length);
                         resolve();
                     });
 
-            p.then(()=>{
+                p.then(()=>{
                         this.editor.selectionEnd = this.editor.selectionStart = pos + 3;
                         this.editor.focus();
-            });
+                });
+            }
+        },
+        makeItalic:function(flag){
+            if(flag)
+            {
+                var start = this.editor.selectionStart;
+                var end = this.editor.selectionEnd;
+                if(start > end)
+                {
+                    var temp = start;
+                    start = end;
+                    end = start;
+                }
+                var p = new Promise((resolve,reject)=>{
+                    this.body = this.body.substring(0,start) + '<i>' + this.body.substring(start,end) + '</i>' + this.body.substring(end,this.body.length);
+                    resolve();
+                });
+                p.then(()=>{
+                    this.editor.selectionEnd = this.editor.selectionStart = end + 7;
+                    this.editor.focus();
+                });
+            }
+            else{
+                var pos = this.editor.selectionStart;
+                var p = new Promise((resolve,reject)=>{
+                        this.body = this.body.substring(0,pos) + '<i></i>' + this.body.substring(pos, this.body.length);
+                        resolve();
+                });
+
+                p.then(()=>{
+                        this.editor.selectionEnd = this.editor.selectionStart = pos + 3;
+                        this.editor.focus();
+                });
+            }
         },
         makeList: function(){
             this.body += '\n  &bull;\t';
@@ -168,8 +247,7 @@ export default {
             this.link = !this.link;
             var pos = this.editor.selectionStart;
             var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substr(0,pos) + '<a href="'+this.extLink+'">'+this.linkName+'</a>' + this.body.substr(pos, this.body.length-1);
-                        console.log(this.body);
+                        this.body = this.body.substring(0,pos) + '<a href="'+this.extLink+'">'+this.linkName+'</a>' + this.body.substring(pos, this.body.length);
                         resolve();
                     });
 
@@ -184,11 +262,11 @@ export default {
                 this.bold = !this.bold;
 
                 if(this.bold)   
-                    this.makeBold();
+                    this.makeBold(false);
                 else if(this.italic)
                 {
                     this.editor.selectionStart = this.editor.selectionStart + 8;
-                    this.makeItalic();
+                    this.makeItalic(false);
                 }
                 else{
                     this.editor.selectionStart = this.editor.selectionStart + 4;
@@ -200,11 +278,11 @@ export default {
                 this.italic = !this.italic;
 
                 if(this.italic){
-                    this.makeItalic();
+                    this.makeItalic(false);
                 }
                 else if(this.bold){
                     this.editor.selectionStart = this.editor.selectionStart + 8;
-                    this.makeBold();
+                    this.makeBold(false);
                 }
                 else{
                     this.editor.selectionStart = this.editor.selectionStart + 4;
@@ -223,9 +301,9 @@ export default {
             {
                 if(this.image)
                 {
+                    var pos = this.editor.selectionStart;
                     var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substr(0,pos) + '\n$$'+(this.imageFiles.length-1)+'$$\n' + this.body.substr(pos, this.body.length-1);
-                        console.log(this.body);
+                        this.body = this.body.substring(0,pos) + '\n$$'+(this.imageFiles.length-1)+'$$\n' + this.body.substring(pos, this.body.length);
                         resolve();
                     });
 
@@ -238,7 +316,7 @@ export default {
             else if(e.target.name === 'link')
             {
                 this.link = !this.link;
-                this.makeLink();
+                this.makeLink(false);
             }
         },
 
@@ -263,11 +341,8 @@ export default {
         },
 
         getSource: function(e){
-            console.log("getSourde get called");
-            console.log(e);
             const input = e.target;
             if (input.files && input.files[0]){
-                console.log('input file is being read');
                 var reader = new FileReader();
                 reader.onload = (e) => {
                     this.imageDatas.push(e.target.result);
@@ -293,18 +368,20 @@ export default {
         // bus.$on('post-called',()=>this.$emit('collect-body',this.body))
     },
     watch:{
-        
         body:function(){
             this.saveBody(this.body);
-        },
-        title:function(){
-
         },
         imageFiles: function(){
             this.saveImageFiles(this.imageFiles);
         },
         imageDatas: function(){
             this.saveImageDatas(this.imageDatas);
+        }
+    },
+    computed:{
+        ...mapGetters(['getBody']),
+        refershBody:function(){
+            this.body = this.getBody;
         }
     }
 }
@@ -380,5 +457,30 @@ textarea{
   font-size: 14pt;
   height: 25pt;
   margin: 5pt auto;
+}
+#symbols{
+    width:150pt;
+    height:125pt;
+    position:absolute;
+    top:40%;
+    left:100%;
+    border-style:solid;
+    border-width:2pt;
+    border-color:#9fc6f8;
+    border-radius:5pt;
+    padding:5pt;
+    transition: 1s;
+}
+#symbols ul li{
+    float:left;
+    padding:5px;
+    border-bottom-style:solid;
+    border-color:#bdc0c4;
+    border-width:2pt;
+    border-radius:2pt;
+    margin:2pt;
+}
+li:hover{
+    color: #fde400;
 }
 </style>

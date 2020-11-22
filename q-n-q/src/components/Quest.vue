@@ -2,6 +2,7 @@
   <div class="quest">
     <div class="part1" :style="{ 'width': '60%' }">
       <div>
+        {{refreshTitle}}
         <label>Title</label>
         <input
           :style="{ width: 'calc(100% - 35pt)' }"
@@ -11,17 +12,17 @@
       </div>
       <label>Body</label>
       <TextEditor />
-      <button :style="{'margin': 'auto','margin-top':'5pt'}" @click="postQuestion">Post</button>
+      <button :style="{'margin': 'auto','margin-top':'5pt'}" @click="">Post</button>
     </div>
     <div class="part1" :style="{ 'width': '40%'}">
       <div class="select">
         <div :style="{ padding: '0% 7%' }">
-          <label>Choose group</label>
-          <input placeholder="Choose group" />
+          <label>Choose Tags</label>
+          <input placeholder="give Tags for better visibility" />
         </div>
         <div :style="{ padding: '0% 7%' }">
-          <label :style="{ padding: '5%' }">Choose Tags</label>
-          <input placeholder="Search" />
+          <label :style="{ padding: '5%' }">Choose group</label>
+          <input placeholder="choose one group" />
         </div>
       </div>
       <label :style="{'margin-left':'20pt'}">Preview</label>
@@ -35,6 +36,8 @@ import { bus } from "../main";
 import TextEditor from "./TextEditor";
 import ContentView from "./ContentView";
 import { mapActions } from "vuex";
+import { mapMutations } from 'vuex';
+import { mapGetters } from 'vuex';
 export default {
   name: "Quest",
   components: {
@@ -49,14 +52,19 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["postThread"]),
-    postQuestion: function () {
-      bus.$emit("post-called");
-      this.$on("collect-body", (body) => {
-        postThread(this.data.title, body, this.data.group, this.data.tag);
-      });
+    ...mapMutations(['saveTitle'])
+    },
+  watch:{
+    title:function(){
+      this.saveTitle(this.title);
     },
   },
+  computed:{
+    ...mapGetters(['getTitle']),
+    refreshTitle: function(){
+      this.title = this.getTitle;
+    }
+  }
 };
 </script>
 

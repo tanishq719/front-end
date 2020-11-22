@@ -12,7 +12,8 @@ const postState = {
 
 const postGetters = {
     getBody: state=> state.body,
-    getImageDatas: state=> state.imageDatas
+    getImageDatas: state=> state.imageDatas,
+    getTitle: state=> state.title
 };
 
 const postActions = {
@@ -20,8 +21,14 @@ const postActions = {
 };
 
 const postMutations = {
+
+    saveTitle: (state, title) =>{
+        console.log("saving title...");
+        state.title = title;
+    },
+
     saveBody: (state, body) => {
-        console.log("savinf body...");
+        console.log("saving body...");
         state.body = body;
     },
 

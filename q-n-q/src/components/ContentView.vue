@@ -1,6 +1,8 @@
 <template>
   <div class="content" >
   {{refreshBody}}
+  <h2 v-text="title" :style="{'margin':'3pt'}"></h2>
+  <hr>
       <p v-html="body">
           <!-- <img v-if="imageDatas" :src="> -->
       </p>
@@ -13,29 +15,25 @@ export default {
     name:"ContentView",
     data:function(){
         return {
-            body: ''
+            body: '',
+            title: ''
         }
     },
     methods:{
 
     },
     computed:{
-        ...mapGetters(['getBody','getImageDatas']),
+        ...mapGetters(['getBody','getTitle','getImageDatas']),
         refreshBody: function(){
-          console.log('from computed of contentView');
             this.body = this.getBody;
+            this.title = this.getTitle;
             var reg = /\$\$\d+\$\$/;
             var i = this.body.search(reg);
             while( i != -1)
             {
-                console.log(i);
-                console.log(this.body[i+2])
                 var replaceAble = '<img src="'+this.getImageDatas[Number(this.body[i+2])]+'" class="contentImg" >';
-                console.log(replaceAble);
                 this.body = this.body.replace(reg,replaceAble);
-                console.log(this.body);
                 i = this.body.search(reg);
-                console.log(i);
             }
         }
     }
