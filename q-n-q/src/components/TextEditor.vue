@@ -7,51 +7,55 @@
                 <button @click="makeLink()">OK</button>
         </div>
         {{refershBody}}
-        <textarea v-model="body" 
+        
+        <textarea contenteditable=true v-model="body" 
         @keydown.exact="gate($event)"
-        @keydown.ctrl.66.exact.prevent="makeBold(true)" 
-        @keydown.ctrl.73.exact.prevent="makeItalic(true)"
+        @keydown.ctrl.66.exact.prevent="makeFontStyleBI('b')" 
+        @keydown.ctrl.73.exact.prevent="makeFontStyleBI('i')"
         @keydown.ctrl.76.exact.prevent="styleLike({'target':{'name':'list'}})" 
         @keydown.enter.exact="listNewline($event)" ref="textarea" rows=20 cols=40 placeholder="Explain">
         </textarea>
-        <div id="pallet">{{letters}}/750</div>
+        <div id="pallet">{{body.length}}/750</div>
         <div style="display:flex; flex-direction:column-reverse;">
             <ul>
                 <li><img @click="styleLike($event)" :style="[bold?style:{}]" name='bold' src="../assets/baseline_format_bold_black_18dp.png" width="25pt" height="25pt"></li>
                 <li><img @click="styleLike($event)" :style="[italic?style:{}]" name='italic' src="../assets/baseline_format_italic_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><img @click="styleLike($event)" :style="[list?style:{}]" name='list' src="../assets/baseline_format_list_bulleted_black_18dp.png" width="25pt" height="25pt"></li>
+                
+                <li><img :style="[list?style:{}]" name='list' src="../assets/baseline_format_list_bulleted_black_18dp.png" width="25pt" height="25pt"></li>
                 <li><label for="file-input"><img @click="image=!image" :style="[image?style:{}]" src="../assets/baseline_image_black_18dp.png" width="25pt" height="25pt"></label></li>
+                
                 <li><img @click="link=!link" :style="[link?style:{}]" name='link' src="../assets/baseline_link_black_18dp.png" width="25pt" height="25pt"></li>
-                <li><img @mouseover="math=!math" :style="[math?style:{}]" name='math' src="../assets/baseline_functions_black_18dp.png" width="25pt" height="25pt"></li>
-                <div @mouseover="math=true" @mouseleave="math=false" v-if="math === true" id="symbols">
-                    <ul>
-                        <li @click="insertSym($event)">&forall;</li>
-                        <li @click="insertSym($event)">&part;</li>
-                        <li @click="insertSym($event)">&exist;</li>
-                        <li @click="insertSym($event)">&sum;</li>
-                        <li @click="insertSym($event)">&prod;</li>
-                        <li @click="insertSym($event)">&minus;</li>
-                        <li @click="insertSym($event)">&#x2213;</li>
-                        <li @click="insertSym($event)">&#x2215;</li>
-                        <li @click="insertSym($event)">&lowast;</li>
-                        <li @click="insertSym($event)">&#x2219;</li>
-                        <li @click="insertSym($event)">&radic;</li>
-                        <li @click="insertSym($event)">&#x221B;</li>
-                        <li @click="insertSym($event)">&#x221C;</li>
-                        <li @click="insertSym($event)">&prop;</li>
-                        <li @click="insertSym($event)">&infin;</li>
-                        <li @click="insertSym($event)">&ang;</li>
-                        <li @click="insertSym($event)">&and;</li>
-                        <li @click="insertSym($event)">&or;</li>
-                        <li @click="insertSym($event)">&cap;</li>
-                        <li @click="insertSym($event)">&cup;</li>
-                        <li @click="insertSym($event)">&int;</li>
-                        <li @click="insertSym($event)">&le;</li>
-                        <li @click="insertSym($event)">&ge;</li>
-                        <li @click="insertSym($event)">&sube;</li>
-                        <li @click="insertSym($event)">&supe;</li>
-                    </ul>
-                </div>
+                <li @mouseover="math=true" @mouseleave="math=false"><img :style="[math?style:{}]" name='math' src="../assets/baseline_functions_black_18dp.png" width="25pt" height="25pt">
+                    <div  v-if="math === true" id="symbols">
+                        <ul>
+                            <li @click="insertSym($event)">&forall;</li>
+                            <li @click="insertSym($event)">&part;</li>
+                            <li @click="insertSym($event)">&exist;</li>
+                            <li @click="insertSym($event)">&sum;</li>
+                            <li @click="insertSym($event)">&prod;</li>
+                            <li @click="insertSym($event)">&minus;</li>
+                            <li @click="insertSym($event)">&#x2213;</li>
+                            <li @click="insertSym($event)">&#x2215;</li>
+                            <li @click="insertSym($event)">&lowast;</li>
+                            <li @click="insertSym($event)">&#x2219;</li>
+                            <li @click="insertSym($event)">&radic;</li>
+                            <li @click="insertSym($event)">&#x221B;</li>
+                            <li @click="insertSym($event)">&#x221C;</li>
+                            <li @click="insertSym($event)">&prop;</li>
+                            <li @click="insertSym($event)">&infin;</li>
+                            <li @click="insertSym($event)">&ang;</li>
+                            <li @click="insertSym($event)">&and;</li>
+                            <li @click="insertSym($event)">&or;</li>
+                            <li @click="insertSym($event)">&cap;</li>
+                            <li @click="insertSym($event)">&cup;</li>
+                            <li @click="insertSym($event)">&int;</li>
+                            <li @click="insertSym($event)">&le;</li>
+                            <li @click="insertSym($event)">&ge;</li>
+                            <li @click="insertSym($event)">&sube;</li>
+                            <li @click="insertSym($event)">&supe;</li>
+                        </ul>
+                    </div>
+                </li>
                 <input id="file-input" @change="getSource" name='image' type="file"/>
             </ul>
         </div>
@@ -61,6 +65,7 @@
 <script>
 import { bus } from '../main';
 import { mapMutations, mapGetters, mapActions} from 'vuex';
+import { Heap } from 'collections/heap';
 export default {
     name: "TextEditor",
     data : function(){
@@ -82,16 +87,14 @@ export default {
             editor:"",
             elapse:false,
             extLink:"",
-            linkName:"",
-            letters:0
+            linkName:""
         }
     },
     methods:{
         ...mapMutations(['saveBody','saveImageFiles','saveImageDatas']),
         ...mapActions(['insertMessages']),
         gate:function(e){
-            console.log(e);
-            if(e.key !== "Backspace" && this.body.length >= 750)
+            if(this.body.length >= 750 && (e.key !== "Backspace" && e.key !== "Delete"))
             {
                 e.preventDefault();
                 this.insertMessages([{'type':'warning','note':'word limit exceeded !!!'}]);
@@ -102,29 +105,110 @@ export default {
             this.body = this.body.substring(0,pos) + e.target.innerHTML + this.body.substring(pos, this.body.length);
             this.editor.selectionEnd = this.editor.selectionStart = pos + 1;
         },
-        makeBold: function(flag){
-            if(flag){
-                var start = this.editor.selectionStart;
-                var end = this.editor.selectionEnd;
+        makeFontStyleBI: function(style){
+            let start = this.editor.selectionStart;
+            let end = this.editor.selectionEnd;
+            let first,last;
+            if(style === 'b'){
+                first = '<b>';
+                last = '</b>';
+            }
+            else{
+                first = '<i>';
+                last = '</i>';
+            }
+            var text = this.body.substring(start,end);
+            // case 1: between bold make unbold word and then partially bold it with already bold one
+            //          in this case span of style unbold wont work
+            // case 2: if selected text is already bold but the tag which is keeping is bold is that
+            //          far that in between many bold tags are there then how to detect equal number of bold unboald
+    
+            // (?x)    # enable regex comment mode
+            // ^       # match start of line/string
+            // (?:     # begin non-capturing group
+            //   (?!   # begin negative lookahead
+            //     ab  # literal text sequence ab
+            //   )     # end negative lookahead
+            //   [^]     # any character including line change
+            // )       # end non-capturing group
+            // +       # repeat previous match one or more times
+            // $       # match end of line/string
+
+            //<b>(?:(?!<\/b>)[^])*"+text+"(?:(?!<b>)[^])*<\/b>
+            let mask = new RegExp(first+"[^]*"+text+"[^]*"+last,"g");
+            let results = this.body.matchAll(mask)
+
+            if(start != end){
                 if(start > end)
                 {
-                    var temp = start;
-                    start = end;
-                    end = start;
+                    [start, end] = [end, start]
                 }
+                // if 'matches' contain anything that means 'text' can be already in bold thus job is to unbold if so
+                // else bold the text
+                let matches = [...results];
+                matches.every(match=>{
+                    if(match.index <= start && match.index + match[0].length >= end)
+                    {
+                        let parts = [];
+                        parts.push(match[0].substring(0,start));
+                        parts.push(match[0].substring(end,match[0].length));
+                        let flag = false;   // if false than unbold text
+                        let limit=0;    // checking whether opening ancd closing bold tags are in balance
+                        for(let i=0; i<parts.length;i++)
+                        {
+                            let container = new Map();
+                            let tags = [first,last];
+                            let temp = null;
+                            let arr;
+                            for(let j=0; j<2; j++)
+                            {
+                                
+                                temp = parts[i].matchAll(new RegExp(tags[j],'g'));
+                                arr = [...temp];
+                                arr.forEach(match=>{
+                                    container.set(match.index,tags[j]);
+                                });
+                            }
+
+                            async function canSort(){
+                                temp = await [...container.entries()].sort();
+                                temp.forEach(s=>{
+                                    if(s[1] == '<b>')
+                                        limit++;
+                                    else
+                                        limit--;
+                                    if(limit < 0)
+                                        flag = true;
+                                    })
+                            }
+                            canSort();
+                        }  
+                        if(limit != 0)
+                                flag = true;
+                        if(!flag){
+                                [first, last] = [last, first];
+                                return false;
+                        }
+                        else    return true;        
+                    }
+                });
+
                 var p = new Promise((resolve,reject)=>{
-                    this.body = this.body.substring(0,start) + '<b>' + this.body.substring(start,end) + '</b>' + this.body.substring(end,this.body.length);
+                    this.body = this.body.substring(0,start) + first + text + last + this.body.substring(end,this.body.length);
                     resolve();
                 });
                 p.then(()=>{
                     this.editor.selectionEnd = this.editor.selectionStart = end + 7;
                     this.editor.focus();
-                });     
+                });
+                // setTimeout(()=>{
+                //     this.bold = false;
+                // }, 200);  
             }
             else{
                 var pos = this.editor.selectionStart;
                 var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substring(0,pos) + '<b></b>' + this.body.substring(pos, this.body.length);
+                        this.body = this.body.substring(0,pos) + first + last + this.body.substring(pos, this.body.length);
                         resolve();
                     });
 
@@ -134,81 +218,48 @@ export default {
                 });
             }
         },
-        makeItalic:function(flag){
-            if(flag)
-            {
-                var start = this.editor.selectionStart;
-                var end = this.editor.selectionEnd;
-                if(start > end)
-                {
-                    var temp = start;
-                    start = end;
-                    end = start;
-                }
-                var p = new Promise((resolve,reject)=>{
-                    this.body = this.body.substring(0,start) + '<i>' + this.body.substring(start,end) + '</i>' + this.body.substring(end,this.body.length);
-                    resolve();
-                });
-                p.then(()=>{
-                    this.editor.selectionEnd = this.editor.selectionStart = end + 7;
-                    this.editor.focus();
-                });
-            }
-            else{
-                var pos = this.editor.selectionStart;
-                var p = new Promise((resolve,reject)=>{
-                        this.body = this.body.substring(0,pos) + '<i></i>' + this.body.substring(pos, this.body.length);
-                        resolve();
-                });
-
-                p.then(()=>{
-                        this.editor.selectionEnd = this.editor.selectionStart = pos + 3;
-                        this.editor.focus();
-                });
-            }
-        },
         makeList: function(){
             this.body += '\n  &bull;\t';
-                    if(this.bold && this.italic)
-                    {
-                        new Promise((resolve, reject)=>{
-                            this.editor.selectionStart = this.editor.selectionStart + 18;
-                            resolve();
-                        })
-                        .then(()=>{
-                            console.log(this.editor.selectionStart);
-                             return new Promise((resolve,reject)=>{
-                                this.makeBold();
-                                resolve();})
-                        })
-                        .then(()=>{
-                                this.makeItalic();
-                            })
-                    }
-                    else if(this.italic)
-                    {
-                        new Promise((resolve, reject)=>{
-                            this.editor.selectionStart = this.editor.selectionStart + 14;
-                            resolve();
-                        })
-                        .then(()=>{
-                            this.makeItalic();
-                        })
-                    }
-                    else if(this.bold)
-                    {
-                        new Promise((resolve, reject)=>{
-                            this.editor.selectionStart = this.editor.selectionStart + 14;
-                            resolve();
-                        })
-                        .then(()=>{
-                            this.makeBold();
-                        })
-                    }
-                    else{
-                        this.editor.selectionStart = this.editor.selectionStart + 10;
-                        this.editor.focus();
-                    }
+            if(this.bold && this.italic)
+            {
+                new Promise((resolve, reject)=>{
+                    this.editor.selectionStart = this.editor.selectionStart + 18;
+                    resolve();
+                })
+                .then(()=>{
+                    console.log(this.editor.selectionStart);
+                        return new Promise((resolve,reject)=>{
+                        this.makeFontStyleBI('b');
+                        resolve();})
+                })
+                .then(()=>{
+                        this.makeFontStyleBI('i');
+                    })
+            }
+            else if(this.italic)
+            {
+                new Promise((resolve, reject)=>{
+                    this.editor.selectionStart = this.editor.selectionStart + 14;
+                    resolve();
+                })
+                .then(()=>{
+                    this.makeFontStyleBI('i');
+                })
+            }
+            else if(this.bold)
+            {
+                new Promise((resolve, reject)=>{
+                    this.editor.selectionStart = this.editor.selectionStart + 14;
+                    resolve();
+                })
+                .then(()=>{
+                    this.makeFontStyleBI('b');
+                })
+            }
+            else{
+                this.editor.selectionStart = this.editor.selectionStart + 10;
+                this.editor.focus();
+            }
         },
         takeList: function(){
             this.body += '\n';
@@ -221,11 +272,11 @@ export default {
                 .then(()=>{
                     console.log(this.editor.selectionStart);
                         return new Promise((resolve,reject)=>{
-                        this.makeBold();
+                        this.makeFontStyleBI('b');
                         resolve();})
                 })
                 .then(()=>{
-                        this.makeItalic();
+                        this.makeFontStyleBI('i');
                     })
             }
             else if(this.italic)
@@ -235,7 +286,7 @@ export default {
                     resolve();
                 })
                 .then(()=>{
-                    this.makeItalic();
+                    this.makeFontStyleBI('i');
                 })
             }
             else if(this.bold)
@@ -245,7 +296,7 @@ export default {
                     resolve();
                 })
                 .then(()=>{
-                    this.makeBold();
+                    this.makeFontStyleBI('b');
                 })
             }
             else{
@@ -273,11 +324,11 @@ export default {
                 this.bold = !this.bold;
 
                 if(this.bold)   
-                    this.makeBold(false);
+                    this.makeFontStyleBI('b');
                 else if(this.italic)
                 {
                     this.editor.selectionStart = this.editor.selectionStart + 8;
-                    this.makeItalic(false);
+                    this.makeFontStyleBI('i');
                 }
                 else{
                     this.editor.selectionStart = this.editor.selectionStart + 4;
@@ -289,11 +340,11 @@ export default {
                 this.italic = !this.italic;
 
                 if(this.italic){
-                    this.makeItalic(false);
+                    this.makeFontStyleBI('i');
                 }
                 else if(this.bold){
                     this.editor.selectionStart = this.editor.selectionStart + 8;
-                    this.makeBold(false);
+                    this.makeFontStyleBI('b');
                 }
                 else{
                     this.editor.selectionStart = this.editor.selectionStart + 4;
@@ -332,6 +383,7 @@ export default {
         },
 
         listNewline: function(e){
+            // for second enter
             if(this.elapse)
             {
                 e.preventDefault();
@@ -339,6 +391,7 @@ export default {
                 this.takeList();
                 this.elapse = false;
             }
+            // for first enter
             if(this.list)
             {
                 e.preventDefault();
@@ -380,12 +433,12 @@ export default {
     },
     watch:{
         body:function(){
-            this.letters = this.body.length;
-            if(this.body.length > 750)
-            {
-                this.body = this.body.substring(0,750);
-                this.insertMessages([{'type':'warning','note':'word limit exceeded !!!'}]);
-            }
+            // this.letters = this.body.length;
+            // if(this.body.length > 750)
+            // {
+            //     this.body = this.body.substring(0,750);
+            //     this.insertMessages([{'type':'warning','note':'word limit exceeded !!!'}]);
+            // }
             this.saveBody(this.body);
         },
         imageFiles: function(){
@@ -487,6 +540,8 @@ textarea{
     border-radius:5pt;
     padding:5pt;
     transition: 1s;
+    background-color: #bdc0c4;
+    opacity: 90%;
 }
 #symbols ul li{
     display:inline-block;
@@ -497,7 +552,7 @@ textarea{
     border-radius:2pt;
     margin:2pt;
 }
-li:hover{
+#symbols ul li:hover{
     color: #fde400;
 }
 #pallet{

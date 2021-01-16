@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <ul>
-      <li v-for="m in getMessages" :key="m.note" :class="m.type" class="notification">
+      <li v-for="m in getMessages" :key="" :class="m.type" class="notification">
         {{m.note}} 
       </li>
     </ul>
