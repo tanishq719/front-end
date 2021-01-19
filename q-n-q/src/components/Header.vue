@@ -100,7 +100,7 @@ export default {
   opacity: 0;
 }
 #logo {
-  width: 100%;
+  width: 80%;
   max-width: 90px;
 }
 #full-form {
@@ -122,16 +122,18 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-top:-7px;
+  /* margin-top:-7px; */
+  margin:0 10%;
 }
 .search-box {
-  width: 100%;
+  width: 30%;
   min-width: 200px;
   align-self: center;
   display: flex;
   justify-content:center;
   align-items: center;
-  margin: 0px 100px;
+  margin:auto;
+  /* margin: 0px 100px; */
 }
 .search-box button {
   padding: 0px 5px 0px 5px;
@@ -162,14 +164,15 @@ export default {
 }
 .about-us{
   display:flex;
-  padding: 0px 20px;
+  /* padding: 0px 20px; */
 }
 .about-us div{
   width: max-content;
   padding: 0px 20px;
 }
 .login-signup {
-  width:40%;
+  /* width:40%; */
+  margin:auto;
   display:flex;
   align-self: center;
   justify-content: center;
@@ -181,6 +184,7 @@ export default {
   text-align: center;
   font-family: "Quicksand", sans-serif;
   font-size: 20px;
+  margin:auto;
 }
 .login-signup button,.quest button{
   padding: 0px 10px 0px 10px;
@@ -206,13 +210,15 @@ export default {
   height:35px;
 }
 .quest{
-  padding-right: 20px;
+  margin:auto;
+  /* padding-right: 20px; */
 }
 .auth{
   display:flex;
   flex-direction: row;
   align-items: center;
   padding:0px 10px;
+  margin:auto;
 }
 
 .auth img{

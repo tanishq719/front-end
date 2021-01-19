@@ -105,7 +105,7 @@ export default {
             this.body = this.body.substring(0,pos) + e.target.innerHTML + this.body.substring(pos, this.body.length);
             this.editor.selectionEnd = this.editor.selectionStart = pos + 1;
         },
-        makeFontStyleBI: function(style){
+        makeFontStyleBI: async function(style){
             let start = this.editor.selectionStart;
             let end = this.editor.selectionEnd;
             let first,last;
@@ -122,6 +122,7 @@ export default {
             //          in this case span of style unbold wont work
             // case 2: if selected text is already bold but the tag which is keeping is bold is that
             //          far that in between many bold tags are there then how to detect equal number of bold unboald
+            //          therefore regex must be greedy not lazy
     
             // (?x)    # enable regex comment mode
             // ^       # match start of line/string
@@ -134,9 +135,31 @@ export default {
             // +       # repeat previous match one or more times
             // $       # match end of line/string
 
-            //<b>(?:(?!<\/b>)[^])*"+text+"(?:(?!<b>)[^])*<\/b>
+            // case 1: when selected string contains text only
+            //          in such case we need to check left and right side,
+            //              such condition wont come when closing is more in number but all before opening(regex is filtering this)
+            //              if at left opening tags are greater then text needs to be unbold
+            //              if at left closing tags are greater or equal to opening then text must be bolded
+            //          at right side:  therefore there is no role of right side here
+            //              no role of opening tags
+            //              if closing tags are equal to or greater than left side opening tags then unbold
+            //              if closing tags are less than left side opening tags then also unbold
+            // case 2: when selected string contains opening tag
+            //          if at left side opening tags are more then unblod the text
+            //              but how, the closing tags at left must be equal to opening tags, 
+            //              and opening tags must be equal to closing tags in right
+            //              also string now should not contain any opening tag
+            //          else bold the text
+            // case 3: when selected string contains closing tag
+            //          if no of unbalanced opening tags at left is more then the closing tags in selected string
+            //              then unbold the string and also remove any tag from the selected string
+            //              at left side no of closing tags must be equal to extra opening tags, and at left opening tags
+            //              must be equal to no of extra closing tags
+            //          else bold the string
+
+            //<b>(?:(?!<\/b>)[^])*"+text+"(?:(?!<b>)[^])*<\/b>      // this was ristricting the search and we need greedy search
             let mask = new RegExp(first+"[^]*"+text+"[^]*"+last,"g");
-            let results = this.body.matchAll(mask)
+            let results = this.body.matchAll(mask);
 
             if(start != end){
                 if(start > end)
@@ -146,64 +169,123 @@ export default {
                 // if 'matches' contain anything that means 'text' can be already in bold thus job is to unbold if so
                 // else bold the text
                 let matches = [...results];
-                matches.every(match=>{
-                    if(match.index <= start && match.index + match[0].length >= end)
-                    {
-                        let parts = [];
-                        parts.push(match[0].substring(0,start));
-                        parts.push(match[0].substring(end,match[0].length));
-                        let flag = false;   // if false than unbold text
-                        let limit=0;    // checking whether opening ancd closing bold tags are in balance
-                        for(let i=0; i<parts.length;i++)
+                if(matches.length === 0)
+                    doStyleAcc(this,1,1);
+                else{
+                    matches.every(match=>{
+                    // console.log(match);
+                    async function callback(_this){
+                        if(match.index <= start && match.index + match[0].length >= end)
                         {
-                            let container = new Map();
-                            let tags = [first,last];
+                            let parts = [];
+                            parts.push(match[0].substring(0,start-match.index));
+                            parts.push(match[0].substring(end-match.index,match[0].length));
+                            let tagInStringMask = new RegExp(first+"|"+last,"g");
+                            let flag = false;   // if false than unbold text
+                            let limit=0;    // checking whether opening ancd closing bold tags are in balance
+                            // for(let i=0; i<parts.length;i++)
+                            // {
+                            // checking left part
                             let temp = null;
-                            let arr;
-                            for(let j=0; j<2; j++)
+                            // console.log(parts[0]);
+                            
+                            temp = parts[0].match(new RegExp(tagInStringMask,"g"));
+                            let openingT = temp.reduce((counter,obj)=>{
+                                if(obj === first)
+                                    counter++;
+                                return counter;
+                            },0)
+
+                            let closingT = temp.length - openingT;
+
+                            // console.log(openingT,closingT);
+
+                            let result = undefined;
+                            result = text.match(tagInStringMask);
+
+                            //case 1
+                            if(!result || result.length === 0)
                             {
-                                
-                                temp = parts[i].matchAll(new RegExp(tags[j],'g'));
-                                arr = [...temp];
-                                arr.forEach(match=>{
-                                    container.set(match.index,tags[j]);
-                                });
+                                // opening tags are greater
+                                if(openingT > closingT)
+                                {
+                                    [first, last] = [last, first];
+                                    doStyleAcc(_this,openingT-closingT,openingT-closingT); //unbold
+                                }
+                                else{
+                                    doStyleAcc(_this,1,1);  //bold
+                                }
                             }
+                            else{
+                                let openingTtext = result.reduce((counter,obj)=>{
+                                    if(obj === first)
+                                        counter++;
+                                    return counter;
+                                },0)
 
-                            async function canSort(){
-                                temp = await [...container.entries()].sort();
-                                temp.forEach(s=>{
-                                    if(s[1] == '<b>')
-                                        limit++;
-                                    else
-                                        limit--;
-                                    if(limit < 0)
-                                        flag = true;
-                                    })
+                                let closingTtext = result.length - openingTtext;
+
+                                //case 2 when opening tags in 'text' is more
+                                if(openingTtext > closingTtext){
+                                    if(openingT > closingT){
+                                        [first, last] = [last, first];
+                                        //sanitize
+                                        text = text.replace(first,"");
+                                        text = text.replace(last,"");
+                                        //                                 extra openings of inner + left side
+                                        doStyleAcc(_this,openingT-closingT,openingTtext-closingTtext + openingT-closingT); //unbold
+                                    }
+                                    else{
+                                        doStyleAcc(_this,1,1);  //bold
+                                    }
+                                }
+                                // case 3 when closing tags in 'text' is more
+                                else if(closingTtext > openingTtext){
+                                    if(openingT - closingT > closingTtext){ // if unbalanced opening tags of left more than inner closing ones
+                                        [first, last] = [last, first];
+                                        //sanitize
+                                        text = text.replace(first,"");
+                                        text = text.replace(last,"");
+                                        //               extra closings of inner + left side openings
+                                        doStyleAcc(_this,openingT-closingT + closingTtext - openingTtext,openingT-closingT); //unbold
+                                    }
+                                    else{
+                                        doStyleAcc(_this,1,1);  //bold
+                                    }
+                                }
+                                else{
+                                    if(openingT > closingT)
+                                    {
+                                        [first, last] = [last, first];
+                                        //sanitize
+                                        text = text.replace(first,"");
+                                        text = text.replace(last,"");
+                                        doStyleAcc(_this,openingT-closingT,openingT-closingT); //unbold
+                                    }
+                                    else{
+                                        //sanitize
+                                        text = text.replace(first,"");
+                                        text = text.replace(last,"");
+                                        doStyleAcc(_this,1,1);  //bold
+                                    }
+                                }
                             }
-                            canSort();
-                        }  
-                        if(limit != 0)
-                                flag = true;
-                        if(!flag){
-                                [first, last] = [last, first];
-                                return false;
-                        }
-                        else    return true;        
+                        }     
                     }
-                });
+                    return callback(this);
+                });}
+                
+            async function doStyleAcc(_this,n,m){
+                let pre = "",post="";
+                for(let i=0; i<n; i++)
+                    pre += first
+                for(let j=0; j<m; j++)
+                    post += last
 
-                var p = new Promise((resolve,reject)=>{
-                    this.body = this.body.substring(0,start) + first + text + last + this.body.substring(end,this.body.length);
-                    resolve();
-                });
-                p.then(()=>{
-                    this.editor.selectionEnd = this.editor.selectionStart = end + 7;
-                    this.editor.focus();
-                });
-                // setTimeout(()=>{
-                //     this.bold = false;
-                // }, 200);  
+                _this.body = await _this.body.substring(0,start) + pre + text + post + _this.body.substring(end,_this.body.length);
+                _this.editor.selectionEnd = _this.editor.selectionStart = await end + 7;
+                await _this.editor.focus();
+            }
             }
             else{
                 var pos = this.editor.selectionStart;
@@ -227,7 +309,7 @@ export default {
                     resolve();
                 })
                 .then(()=>{
-                    console.log(this.editor.selectionStart);
+                    // console.log(this.editor.selectionStart);
                         return new Promise((resolve,reject)=>{
                         this.makeFontStyleBI('b');
                         resolve();})
@@ -270,7 +352,7 @@ export default {
                     resolve();
                 })
                 .then(()=>{
-                    console.log(this.editor.selectionStart);
+                    // console.log(this.editor.selectionStart);
                         return new Promise((resolve,reject)=>{
                         this.makeFontStyleBI('b');
                         resolve();})

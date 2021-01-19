@@ -26,17 +26,21 @@ export default {
 </script>
 
 <style>
+html,body{
+  height:100%;
+}
 #bottom{
   display:flex;
-  flex-direction:row;
+  height:100%
+  /* flex-direction:row; */
 }
 hr{
-  height:1pt;
-  background-color:rgb(102, 85, 85);
-  border:none;
-  margin-top: -1px;
+  margin:0 10px;
 }
 #home{
+  display:flex;
+  flex-direction: column;
+  height:100%;
   content: fit-content(100%);
   border:0px;
   padding:0px;

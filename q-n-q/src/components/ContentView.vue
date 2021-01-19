@@ -44,7 +44,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
 .content{
     padding:5px;
-    margin:5px 0;
+    margin:5px 0 35pt 20pt;
     border-radius: 7px;
     border-style: solid;
     border-color: #0a234d;
@@ -52,7 +52,7 @@ export default {
     font-family:'Montserrat', sans-serif;
     font-size:14pt;
     height: 335px;
-    margin-left: 20pt;
+    /* margin-left: 20pt; */
     word-wrap: break-word;
     overflow-y: auto;
 }

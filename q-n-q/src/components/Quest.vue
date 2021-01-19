@@ -21,7 +21,7 @@
           <input placeholder="for better visibility" />
           <div v-if="fetchedTags.length!=0" class="choose-tag"></div>
         </div>
-        <div :style="{ padding: '0% 7%' }">
+        <div :style="{ padding: '0% 4%' }">
           <label>Choose group</label>
           <input placeholder="choose one group" />
         </div>
@@ -72,9 +72,10 @@ export default {
 
 <style scoped>
 .quest {
-  width: 100%;
-  margin: 0% 10%;
-  margin-top: 2%;
+  width: 80%;
+  height:100%;
+  margin: auto;
+  /* margin-top: 0%; */
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -82,6 +83,7 @@ export default {
 .part1 {
   display: flex;
   flex-direction: column;
+  margin:auto;
 }
 input {
   display: block;
