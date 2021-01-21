@@ -14,6 +14,7 @@
         @keydown.ctrl.73.exact.prevent="makeFontStyleBI('i')"
         @keydown.ctrl.76.exact.prevent="styleLike({'target':{'name':'list'}})" 
         @keydown.enter.exact="listNewline($event)" ref="textarea" rows=20 cols=40 placeholder="Explain">
+        <b contenteditable=false>Hello World</b>
         </textarea>
         <div id="pallet">{{body.length}}/750</div>
         <div style="display:flex; flex-direction:column-reverse;">
@@ -503,8 +504,9 @@ export default {
             this.image = !this.image;
         },
 
-        initialize: function(){
-            this.editor = this.$refs['textarea'];
+        initialize: async function(){
+            this.editor = await this.$refs['textarea'];
+            this.editor.focus();
         }
     },
     mounted(){
@@ -532,8 +534,9 @@ export default {
     },
     computed:{
         ...mapGetters(['getBody']),
-        refershBody:function(){
+        refershBody: function(){
             this.body = this.getBody;
+            // await this.editor.focus();
         }
     }
 }

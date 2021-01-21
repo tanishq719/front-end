@@ -36,6 +36,8 @@ html,body{
 }
 hr{
   margin:0 10px;
+  border-color: black;
+  border-width: 0.5pt;
 }
 #home{
   display:flex;

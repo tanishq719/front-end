@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <ul>
-      <li v-for="m in getMessages" :key="" :class="m.type" class="notification">
+      <li v-for="(m,index) in getMessages" :key="index" :class="m.type" class="notification">
         {{m.note}} 
       </li>
     </ul>
@@ -24,7 +24,7 @@ export default {
   justify-content: center;
   position:absolute;
   top:0;
-  left:auto;
+  left:0;
   width:100%;
   padding-top:2%;
   z-index: 1;

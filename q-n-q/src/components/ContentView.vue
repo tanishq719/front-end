@@ -1,22 +1,43 @@
 <template>
-  <div class="content" >
-  {{refreshBody}}
-  <h2  v-text="title" :style="{'margin':'3pt'}"></h2>
-  <hr v-if="title.length !== 0">
-      <p v-html="body">
+    <div class="content" ref='content'>
+        {{refreshBody}}
+        <h2  v-text="title" :style="{'margin':'3pt'}"></h2>
+        <hr v-if="title.length !== 0">
+        <br>
+        <p v-html="body" >
           <!-- <img v-if="imageDatas" :src="> -->
-      </p>
-  </div>
+        </p>
+        <br>
+        <hr>
+        <div class="tags">
+            Tags: 
+            <ul>
+                <li v-for="(name,index) in tagList" :key="index"><Tag @cancle-tag="tagList.splice(index,1)" :value="name" color="blue" customizable="true"/> </li>
+            </ul>
+        </div>
+        <div class="tags">
+            Group
+            <ul>
+                <li v-for="(name,index) in groupList" :key="index"><Tag @cancle-tag="groupList.splice(index,1)" :value="name" color="red" customizable="true"/> </li>
+            </ul>
+        </div>
+    </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import Tag from './Tag';
 export default {
     name:"ContentView",
+    components:{
+        Tag
+    },
     data:function(){
         return {
             body: '',
-            title: ''
+            title: '',
+            tagList:['Java','Python','JS','Java','Python','JS'],
+            groupList:['Javalane','TechZombies',"Elon's Group"]
         }
     },
     methods:{
@@ -35,6 +56,15 @@ export default {
                 this.body = this.body.replace(reg,replaceAble);
                 i = this.body.search(reg);
             }
+            // this.$refs['content'].focus();
+            // var height = await this.$refs['content'].scrollHeight;
+            // window.scrollTo(0,height)
+
+            if(this.$refs.content)
+            {
+                console.log(this.$refs['content'].scrollHeight)
+                this.$refs.content.scrollTop = this.$refs['content'].scrollHeight;
+            }
         }
     }
 }
@@ -51,6 +81,8 @@ export default {
     border-width: 2pt;
     font-family:'Montserrat', sans-serif;
     font-size:14pt;
+    display:flex;
+    flex-direction:column;
     height: 335px;
     /* margin-left: 20pt; */
     word-wrap: break-word;
@@ -62,8 +94,23 @@ p{
     word-break: break-all;
     margin: 0;
 }
+hr{
+    border-color: black;
+    border-width: 0.5pt;
+    margin: 0;
+}
 </style>
 <style>
+.tags ul{
+    list-style: none;
+    padding: 0;
+    margin: 2pt;
+    display: block;
+    margin: 5pt;
+}
+.tags li{
+    float:left;
+}
 .contentImg{
     width:60%;
     height:20%;

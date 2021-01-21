@@ -37,6 +37,7 @@ export default {
   padding:2% 5%;
   min-width:50%;
   width:100px;
+  height:fit-content;
   text-align: center;
   border-style: solid;
   border-color:skyblue;
